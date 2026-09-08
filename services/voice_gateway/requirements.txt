@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+twilio
+python-multipart
+aws_sdk_bedrock_runtime>=0.1.0,<0.2.0
+smithy-aws-core>=0.0.1
+requests

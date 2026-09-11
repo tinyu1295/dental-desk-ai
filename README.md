@@ -172,10 +172,16 @@ above — see [`terraform/README.md`](terraform/README.md) for those.
   frees immediately; there's just no tool exposed for it yet)
 - SMS/email confirmation after booking
 - Any clinical advice, or handling more than one appointment per call
-- Auth on `booking_service` — it currently trusts anything inside the
-  Docker network, which is fine for a private demo and not for production
+- Auth on `booking_service` — it has none of its own, and relies entirely
+  on not being reachable from outside its host: the Docker network when
+  run locally, a loopback-only port on the EC2 instance when deployed.
+  Fine for a private demo, not for production
 
 ## Stack
 
 FastAPI · PostgreSQL 16 (`btree_gist`) · Amazon Bedrock (Nova Sonic) ·
-Twilio Media Streams · Docker Compose
+Twilio Media Streams · Docker Compose · Terraform (ECS on EC2, RDS)
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).

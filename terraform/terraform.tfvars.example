@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars (gitignored) and fill in your own values, or
+# supply these as TF_VAR_domain_name / TF_VAR_admin_email /
+# TF_VAR_twilio_auth_token environment variables instead.
+
+domain_name = "your-subdomain.example.com"
+admin_email = "you@example.com"
+
+# Twilio Account Auth Token - same value as TWILIO_AUTH_TOKEN in the
+# project's own .env. Marked `sensitive` in variables.tf either way, but
+# doubly worth keeping this file out of git.
+twilio_auth_token = "your_auth_token_here"

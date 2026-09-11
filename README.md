@@ -98,6 +98,14 @@ make health              # liveness/readiness of both services
 Manual voice-side test scenarios, including a full example call transcript,
 are in [`services/voice_gateway/TEST_SCENARIO_ROUTINE_BOOKING.md`](services/voice_gateway/TEST_SCENARIO_ROUTINE_BOOKING.md).
 
+## Deploying to AWS
+
+[`terraform/`](terraform/) provisions this as real infrastructure —
+EC2 + ECS (EC2 launch type) running both containers, RDS PostgreSQL,
+ECR, and every secret delivered through SSM `SecureString` rather than a
+plaintext env var. See [`terraform/README.md`](terraform/README.md) for
+what it provisions and how to apply it.
+
 ## What it can do today
 
 - Recognize a returning patient by name + date of birth, and offer the

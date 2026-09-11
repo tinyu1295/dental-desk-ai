@@ -10,7 +10,6 @@ import requests
 
 from dotenv import load_dotenv, find_dotenv
 from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
 from twilio.request_validator import RequestValidator
 
 from bedrock_stream import BedrockStreamManager
@@ -95,18 +94,6 @@ def _validate_twilio_request(request: Request, form: dict) -> bool:
     signature = request.headers.get("X-Twilio-Signature", "")
     url = f"{PUBLIC_BASE_URL}{request.url.path}"
     return _validator.validate(url, form, signature)
-
-
-@app.get("/greeting.wav")
-def greeting_wav():
-    """Pre-recorded, not generated live -- Nova Sonic can't be safely forced
-    to speak first mid-call (a hidden role="USER" TEXT trigger breaks every
-    subsequent turn with a ValidationException, per the hotel project's
-    BUILD_LOG.md). Generated once, offline, via generate_greeting.py, in
-    Nova Sonic's own voice; Twilio plays this static file before the live
-    stream ever connects, so the caller hears something immediately
-    instead of dead air while waiting for the model's first turn."""
-    return FileResponse("audio/greeting.wav", media_type="audio/wav")
 
 
 @app.post("/twilio/voice")

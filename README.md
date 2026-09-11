@@ -49,6 +49,11 @@ Two services, one database:
   constraints that make double-booking a database-level impossibility, not
   an application-level check that a bug could skip.
 
+A more detailed walkthrough of the repo layout, the schema, and the
+overlap-constraint logic is in [`docs/chairside.excalidraw`](docs/chairside.excalidraw)
+(open at [excalidraw.com](https://excalidraw.com) or with the Excalidraw
+VS Code extension).
+
 ## Why the AI can't invent details
 
 The model is never trusted to hold a fact on its own. A name, date of

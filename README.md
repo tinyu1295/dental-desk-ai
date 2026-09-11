@@ -106,6 +106,52 @@ ECR, and every secret delivered through SSM `SecureString` rather than a
 plaintext env var. See [`terraform/README.md`](terraform/README.md) for
 what it provisions and how to apply it.
 
+```mermaid
+flowchart TB
+    Caller["Caller<br/>dials the clinic's number"]
+    Twilio["Twilio<br/>Media Streams"]
+
+    subgraph AWS["AWS · us-east-1"]
+        R53["Route53<br/>A record to Elastic IP"]
+
+        subgraph VPCbox["VPC · 10.0.0.0/16"]
+            subgraph Pub["Public subnets, 2 AZ"]
+                subgraph EC2host["EC2 t2.small - one ECS EC2-launch-type host"]
+                    Nginx["nginx :80 / :443<br/>TLS via certbot"]
+                    VG["voice_gateway<br/>:8001"]
+                    BS["booking_service<br/>:8000<br/>no security group access"]
+                end
+            end
+            subgraph Priv["Private subnets, 2 AZ, no NAT"]
+                RDS[("RDS PostgreSQL<br/>db.t4g.micro")]
+            end
+        end
+
+        Bedrock["Amazon Bedrock<br/>Nova Sonic"]
+    end
+
+    Caller -->|PSTN| Twilio
+    Twilio <-->|"wss:// audio, live call"| R53
+    R53 --> Nginx
+    Nginx -->|"proxy_pass<br/>127.0.0.1:8001"| VG
+    VG -->|"POST /tools/*<br/>127.0.0.1:8000"| BS
+    BS -->|"5432, security-group<br/>restricted to this host"| RDS
+    VG -->|"InvokeModelWithBidirectionalStream<br/>as a dedicated IAM user"| Bedrock
+
+    classDef external fill:#eef,stroke:#88a
+    classDef aws fill:#fff3e0,stroke:#e8a33d
+    classDef private fill:#ffe8e8,stroke:#d9534f
+    class Caller,Twilio external
+    class R53,Bedrock aws
+    class RDS private
+```
+
+`booking_service` has no entry in any security group — the only way to
+reach it is a loopback call from `voice_gateway` on the same host.
+ECR image pulls and the SSM secret resolution that feeds both
+containers happen at deploy/task-start time, not on the call path
+above — see [`terraform/README.md`](terraform/README.md) for those.
+
 ## What it can do today
 
 - Recognize a returning patient by name + date of birth, and offer the

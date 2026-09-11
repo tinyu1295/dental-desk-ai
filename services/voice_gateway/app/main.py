@@ -128,8 +128,9 @@ async def twilio_voice(request: Request):
     # every call here carries X-Twilio-Service-Flow-Event with
     # call_transfer_url, meaning this number's Voice Configuration routes
     # through a Twilio Studio Flow "Connect Call To" transfer - the hotel
-    # project's number may not. See DENTAL_LOG.md for the full comparison
-    # table and the two unconfirmed leads (Console config, S3 hosting).
+    # project's number may not. Two leads remain unconfirmed: a Studio
+    # Flow config change in the Twilio Console, and hosting greeting.wav
+    # on S3 instead of self-hosting it here.
     # Plain <Connect><Stream> below is what's actually proven reliable
     # here (15+ calls) - the caller gets Nova Sonic's own live greeting
     # instead of a pre-recorded one.
